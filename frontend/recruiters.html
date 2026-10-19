@@ -30,7 +30,10 @@
       <ul id="recruiter-list" class="recruiter-list" aria-label="Recruiter profiles" hidden></ul>
       <section aria-labelledby="offer-heading">
         <h2 id="offer-heading">Contacts from offer announcements</h2>
-        <p class="note">Find internship and early-career offer posts at this company. Open a post to check who was thanked; they may be a recruiter, mentor, or interviewer. Search previews may omit names.</p>
+        <p class="note">Find posts thanking recruiting contacts for this company and role. Open a post to check who was thanked; they may be a recruiter, mentor, or interviewer. Search previews may omit names.</p>
+        <label for="offer-role">Job title for offer-post search (optional)</label>
+        <input id="offer-role" maxlength="200" placeholder="e.g. Data Analyst" />
+        <p id="offer-query" class="note"></p>
         <button id="find-offer-posts" type="button">Find recruiters mentioned in offer posts</button>
         <p id="offer-status" role="status"></p>
         <ul id="offer-list" class="recruiter-list" aria-label="Offer announcements" hidden></ul>

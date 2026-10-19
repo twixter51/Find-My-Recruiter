@@ -148,15 +148,37 @@ export async function searchRecruiters(company: unknown, team: unknown): Promise
   return { query, recruiters: extractRecruiters(data) };
 }
 
-export function buildOfferQuery(company: unknown): string {
+export function buildOfferQuery(company: unknown, jobTitle: unknown): string {
   const employer = normalizeRecruiterSearch(cleanField(company, true), "").company;
-  return [
+
+  if (jobTitle !== undefined && typeof jobTitle !== "string") {
+    throw new PostingError("Job title must be text.", 400);
+  }
+
+  // Drop posting-specific details while preserving the actual role wording.
+  cleanField(jobTitle, false);
+  const rawTitle = typeof jobTitle === "string" ? jobTitle : "";
+  const title = cleanField(rawTitle.split(/,|\s[|??-]\s|\(/)[0], false);
+  const role = title
+    .replace(/\b(?:internship|intern|co-op|new grad(?:uate)?|entry level)\b/gi, " ")
+    .replace(/^(?:senior|junior|sr\.?|jr\.?)\s+/i, "")
+    .replace(/\b20\d{2}\b/g, " ")
+    .replace(/\b(?:summer|winter|fall|spring)\b/gi, " ")
+    .replace(/\s+/g, " ")
+    .replace(/^[\s-]+|[\s-]+$/g, "");
+
+  const parts = [
     '(site:linkedin.com/posts/ OR site:linkedin.com/feed/update/)',
     `"${employer}"`,
-    '("accepted" OR "joining")',
-    '("internship" OR "new grad" OR "software engineer")',
-    '("thanks" OR "thank" OR "grateful")',
-  ].join(" ");
+  ];
+
+  if (role) {
+    parts.push(`"${role}"`);
+  }
+
+  parts.push('(recruiter OR "recruiting team" OR "talent acquisition")');
+  parts.push('("thank you" OR "special thanks" OR "thanks to" OR "shoutout" OR "shout out" OR "grateful to")');
+  return parts.join(" ");
 }
 
 export function extractOfferPosts(data: unknown) {
@@ -200,7 +222,7 @@ export function extractOfferPosts(data: unknown) {
     const snippet = typeof item.snippet === "string" ? item.snippet : "";
     // Only suggest a name when a thanks phrase directly precedes it.
     // This is a possible contact, not proof that the person is a recruiter.
-    const mention = snippet.match(/(?:[Tt]hanks to|[Tt]hank you to|[Tt]hank my recruiter|[Tt]hanks to my recruiter)\s+@?([\p{Lu}][\p{L}'’-]+(?:\s+[\p{Lu}][\p{L}'’-]+){1,3})(?=\s|[,.!]|$)/u);
+    const mention = snippet.match(/(?:[Tt]hanks to|[Tt]hank you to|[Tt]hank my recruiter|[Tt]hanks to my recruiter|[Ss]pecial thanks to|[Ss]houtout to|[Ss]hout out to|[Gg]rateful to)\s+@?([\p{Lu}][\p{L}'’-]+(?:\s+[\p{Lu}][\p{L}'’-]+){1,3})(?=\s|[,.!]|$)/u);
 
     posts.push({
       title: item.title,
@@ -213,8 +235,8 @@ export function extractOfferPosts(data: unknown) {
   return posts;
 }
 
-export async function searchOfferPosts(company: unknown) {
-  const query = buildOfferQuery(company);
+export async function searchOfferPosts(company: unknown, jobTitle?: unknown) {
+  const query = buildOfferQuery(company, jobTitle);
   const data = await runSearch(query);
   return { query, posts: extractOfferPosts(data) };
 }

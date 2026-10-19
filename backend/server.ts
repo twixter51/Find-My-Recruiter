@@ -54,7 +54,7 @@ app.get("/api/recent-searches", async (_req, res) => {
 
 // Serve the frontend from the same origin as the API.
 app.post("/api/offer-posts", async (req, res) => {
-  const results = await searchOfferPosts(req.body?.company);
+  const results = await searchOfferPosts(req.body?.company, req.body?.jobTitle);
   res.json(results);
 });
 

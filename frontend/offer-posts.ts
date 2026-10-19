@@ -9,14 +9,26 @@ function initializeOfferSearch(): void {
     return;
   }
 
+  const roleInput = document.querySelector<HTMLInputElement>("#offer-role");
+  const queryLabel = document.querySelector<HTMLElement>("#offer-query");
+
+  if (!roleInput || !queryLabel) {
+    return;
+  }
+
+  roleInput.value = new URLSearchParams(window.location.search).get("title") || "";
   let version = 0;
 
-  companyInput.addEventListener("input", () => {
+  const clearOfferResults = (): void => {
     version += 1;
     list.replaceChildren();
     list.hidden = true;
-    status.textContent = "Search again to use the updated company.";
-  });
+    queryLabel.textContent = "";
+    status.textContent = "Search again to use the updated company and role.";
+  }
+
+  companyInput.addEventListener("input", clearOfferResults);
+  roleInput.addEventListener("input", clearOfferResults);
 
   button.addEventListener("click", async () => {
     if (button.disabled || !companyInput.reportValidity()) {
@@ -28,13 +40,14 @@ function initializeOfferSearch(): void {
     button.disabled = true;
     list.replaceChildren();
     list.hidden = true;
+    queryLabel.textContent = "";
     status.textContent = "Searching offer announcements...";
 
     try {
       const response = await fetch("/api/offer-posts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ company: employer }),
+        body: JSON.stringify({ company: employer, jobTitle: roleInput.value.trim() }),
         signal: AbortSignal.timeout(20000),
       });
       const data = await response.json();
@@ -50,6 +63,8 @@ function initializeOfferSearch(): void {
       if (!Array.isArray(data.posts)) {
         throw new Error("The server returned an unexpected response.");
       }
+
+      queryLabel.textContent = `Search used: ${data.query}`;
 
       for (const post of data.posts) {
         if (!post || typeof post.title !== "string" || typeof post.url !== "string" || typeof post.snippet !== "string") {
@@ -91,7 +106,7 @@ function initializeOfferSearch(): void {
       list.hidden = list.childElementCount === 0;
 
       if (list.hidden) {
-        status.textContent = "No matching offer announcements found. Try another company name.";
+        status.textContent = "No matching offer announcements found. Try a shorter role title, or leave the role blank to broaden the search.";
       } else {
         status.textContent = `${list.childElementCount} possible offer announcements. Check each post to confirm its context.`;
       }

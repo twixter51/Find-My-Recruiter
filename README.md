@@ -12,7 +12,7 @@ Find My Rec is a student-built MVP that reads public job postings and helps you 
 
 - **Read job postings** — extract the title, company, locations, team, and description when available.
 - **Find potential recruiters** — search LinkedIn profiles by company and optional specialty.
-- **Explore offer announcements** — find internship and early-career posts, with possible contact names when a search preview explicitly includes a thank-you mention.
+- **Explore offer announcements** — find internship and early-career posts, with possible contact names when a search preview explicitly includes a thank-you mention. (Experimental)
 - **Try sample jobs** — use, copy, or open Amazon and Zip posting links directly from the home page.
 - **Reuse recent searches** — cache results for ten minutes to reduce repeated API calls.
 
@@ -131,9 +131,9 @@ All routes accept JSON through `POST` requests.
 | --- | --- | --- |
 | `/api/search` | `jobUrl` | Job details and normalized search defaults. |
 | `/api/recruiters` | `company`, optional `team` | Search query and potential recruiter profiles. |
-| `/api/offer-posts` | `company` | Search query, announcement links, previews, and possible names. |
+| `/api/offer-posts` | `company`, optional `jobTitle` | Search query, announcement links, previews, and possible names. |
 
-Offer-post searches use the company only and focus on internship and early-career announcements.
+Offer-post searches use the company and an editable job title. Queries require recruiting terms and acknowledgment phrases, without requiring "accepted" or "joining". Posting dates, internship labels, and team suffixes are removed from the role where recognizable. Leave the role blank for a broader search. Names remain unverified and are extracted only from search previews.
 
 ## Tech stack
 
@@ -183,7 +183,7 @@ The app currently binds to `127.0.0.1` for local use. It uses the `PORT` environ
 Before deploying, adapt the server binding and configuration for the selected host, set `SERPER_API_KEY` through the host's environment settings, and test the full workflow on the public URL. Do not upload the local environment file.
 
 ## Roadmap
-
+- [ ] Add a storage for potential words that thank you posts can have, redo the thank you post functionality.
 - [ ] Add pagination and an explicit search-refresh option.
 - [ ] Improve job-page validation and extraction across more employers.
 - [ ] Refine the visual design and loading states.
