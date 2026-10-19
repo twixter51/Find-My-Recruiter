@@ -1,0 +1,147 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 64px 20px;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #20252b;
+  background: #f7f8fa;
+}
+
+main {
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin: 0 0 8px;
+}
+
+form {
+  margin-top: 28px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+input,
+button {
+  font: inherit;
+  border-radius: 6px;
+  padding: 12px;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #78828e;
+  background: white;
+}
+
+input:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+button {
+  margin-top: 12px;
+  border: 0;
+  background: #2456a6;
+  color: white;
+  cursor: pointer;
+}
+
+button:disabled {
+  background: #596575;
+  cursor: not-allowed;
+}
+
+.note {
+  color: #535d69;
+  font-size: 0.875rem;
+}
+
+.sample-jobs {
+  margin-top: 28px;
+}
+
+.sample-jobs h2 {
+  font-size: 1.1rem;
+}
+
+.sample-list {
+  padding: 0;
+  list-style: none;
+}
+
+.sample-list li {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #cbd0d8;
+  border-radius: 6px;
+  background: white;
+}
+
+.sample-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sample-actions button {
+  margin-top: 0;
+  padding: 8px 12px;
+}
+
+#job-results {
+  margin-top: 32px;
+  border-top: 1px solid #cbd0d8;
+  padding-top: 16px;
+  overflow-wrap: anywhere;
+}
+
+dt {
+  margin-top: 12px;
+  font-weight: 600;
+}
+
+dd {
+  margin-left: 0;
+}
+
+details {
+  margin-top: 20px;
+}
+
+summary {
+  cursor: pointer;
+}
+
+#job-description {
+  white-space: pre-line;
+}
+
+.results-heading {
+  margin-top: 24px;
+}
+
+.recruiter-list {
+  padding: 0;
+  list-style: none;
+}
+
+.recruiter-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 0;
+  border-bottom: 1px solid #cbd0d8;
+  overflow-wrap: anywhere;
+}

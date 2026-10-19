@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recruiter results | Find My Rec</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="dist/recruiters.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <a href="index.html">Back to job posting</a>
+      <h1 class="results-heading">Recruiter results</h1>
+      <p id="recruiter-context"></p>
+      <p class="note">Potential contacts, not confirmed recruiters for this opening.</p>
+
+      <form id="recruiter-search-form">
+        <label for="search-company">Company name</label>
+        <input id="search-company" name="company" required maxlength="200" />
+        <label for="search-team">Team or specialty (optional)</label>
+        <input id="search-team" name="team" maxlength="200" />
+        <button type="submit">Find recruiters</button>
+      </form>
+      <p class="note">Use the company's common name. Broaden the search by leaving the specialty blank.</p>
+      <p id="recruiter-query" class="note"></p>
+
+      <p id="recruiter-status" role="status">
+        Review the company and specialty, then select Find recruiters.
+      </p>
+      <ul id="recruiter-list" class="recruiter-list" aria-label="Recruiter profiles" hidden></ul>
+      <section aria-labelledby="offer-heading">
+        <h2 id="offer-heading">Contacts from offer announcements</h2>
+        <p class="note">Find internship and early-career offer posts at this company. Open a post to check who was thanked; they may be a recruiter, mentor, or interviewer. Search previews may omit names.</p>
+        <button id="find-offer-posts" type="button">Find recruiters mentioned in offer posts</button>
+        <p id="offer-status" role="status"></p>
+        <ul id="offer-list" class="recruiter-list" aria-label="Offer announcements" hidden></ul>
+      </section>
+      <script src="dist/offer-posts.js" defer></script>
+    </main>
+  </body>
+</html>

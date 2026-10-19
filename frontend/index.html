@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find My Rec</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="dist/main.js" defer></script>
+    <script src="dist/recent-searches.js" defer></script>
+  </head>
+  <body>
+    <main>
+      <h1>Find My Rec</h1>
+      <p>Find potential recruiter contacts for a job you're interested in.</p>
+
+      <form id="job-form">
+        <label for="job-url">Job posting URL</label>
+        <input
+          id="job-url"
+          name="jobUrl"
+          type="url"
+          placeholder="https://company.com/careers/job"
+          required
+          aria-describedby="search-note"
+        />
+        <br>
+        <button type="submit">Read job posting</button>
+        <p id="search-note" class="note">Paste a public job posting link. Some sites require sign-in or block automated reading.</p>
+        <p id="search-status" role="status" aria-live="polite"></p>
+        
+      </form>
+
+      <section class="sample-jobs" aria-labelledby="sample-heading">
+        <h2 id="sample-heading">Try a sample job</h2>
+        <p class="note">Select Use sample to fill the form, then select Read job posting. You can also open or copy the posting link.</p>
+        <ul class="sample-list">
+          <li>
+            <strong>Sample: Amazon</strong>
+            <a href="https://www.amazon.jobs/en/jobs/10529525/software-development-engineer-intern-co-op-robotics-2027" target="_blank" rel="noopener noreferrer">Software Development Engineer Intern/Co-Op, Robotics — 2027</a>
+            <div class="sample-actions">
+              <button type="button" data-sample-action="use" aria-label="Use Amazon sample">Use sample</button>
+              <button type="button" data-sample-action="copy" aria-label="Copy Amazon job link">Copy link</button>
+            </div>
+          </li>
+          <li>
+            <strong>Sample: Zip</strong>
+            <a href="https://jobs.ashbyhq.com/zip/249837b3-106f-4751-a4f2-03a2c5df5faf" target="_blank" rel="noopener noreferrer">Software Engineer Intern — Summer 2027</a>
+            <div class="sample-actions">
+              <button type="button" data-sample-action="use" aria-label="Use Zip sample">Use sample</button>
+              <button type="button" data-sample-action="copy" aria-label="Copy Zip job link">Copy link</button>
+            </div>
+          </li>
+        </ul>
+        <p id="sample-status" class="note" role="status"></p>
+        <p class="note">These are real postings and may close or change.</p>
+      </section>
+
+
+
+      <section aria-labelledby="recent-heading">
+        <h2 id="recent-heading">Recent searches</h2>
+        <p class="note">Shared demo history: job titles, companies, and search dates are visible to all visitors. Job links are saved on the server.</p>
+        <button id="refresh-history" type="button">Refresh recent searches</button>
+        <p id="history-status" role="status"></p>
+        <ul id="history-list" class="recruiter-list"></ul>
+      </section>
+    </main>
+  </body>
+</html>
