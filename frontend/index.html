@@ -9,11 +9,15 @@
     <script src="dist/recent-searches.js" defer></script>
   </head>
   <body>
+    <header class="site-header"><a class="brand" href="index.html">Find My Rec<span class="brand-dot">.</span></a><span class="header-note">A better starting point.</span></header>
     <main>
-      <h1>Find My Rec</h1>
-      <p>Find potential recruiter contacts for a job you're interested in.</p>
+      <div class="hero">
+        <p class="eyebrow">FROM JOB POSTING TO PEOPLE</p>
+        <h1>Open New Doors.</h1>
+        <p class="intro">You found a role you like. Find My Rec helps you discover recruiting contacts and the conversations that could lead you to them.</p>
+      </div>
 
-      <form id="job-form">
+      <form id="job-form" class="search-panel">
         <label for="job-url">Job posting URL</label>
         <input
           id="job-url"
@@ -23,13 +27,14 @@
           required
           aria-describedby="search-note"
         />
-        <br>
+
         <button type="submit">Read job posting</button>
         <p id="search-note" class="note">Paste a public job posting link. Some sites require sign-in or block automated reading.</p>
         <p id="search-status" role="status" aria-live="polite"></p>
         
       </form>
 
+      <div class="steps"><p><span>01</span> Paste a job link</p><p><span>02</span> Explore contacts</p><p><span>03</span> Make your introduction</p></div>
       <section class="sample-jobs" aria-labelledby="sample-heading">
         <h2 id="sample-heading">Try a sample job</h2>
         <p class="note">Select Use sample to fill the form, then select Read job posting. You can also open or copy the posting link.</p>
@@ -57,7 +62,7 @@
 
 
 
-      <section aria-labelledby="recent-heading">
+      <section class="history-section" aria-labelledby="recent-heading">
         <h2 id="recent-heading">Recent searches</h2>
         <p class="note">Shared demo history: job titles, companies, and search dates are visible to all visitors. Job links are saved on the server.</p>
         <button id="refresh-history" type="button">Refresh recent searches</button>
@@ -65,5 +70,6 @@
         <ul id="history-list" class="recruiter-list"></ul>
       </section>
     </main>
+    <footer>Find My Rec <span>Built for the next step in your career.</span></footer>
   </body>
 </html>

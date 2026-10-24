@@ -43,7 +43,7 @@ app.post("/api/search", async (req, res) => {
 });
 
 app.post("/api/recruiters", async (req, res) => {
-  const results = await searchRecruiters(req.body?.company, req.body?.team);
+  const results = await searchRecruiters(req.body?.company, req.body?.team, req.body?.forceRefresh, req.body?.page);
   res.json(results);
 });
 
@@ -54,7 +54,12 @@ app.get("/api/recent-searches", async (_req, res) => {
 
 // Serve the frontend from the same origin as the API.
 app.post("/api/offer-posts", async (req, res) => {
-  const results = await searchOfferPosts(req.body?.company, req.body?.jobTitle);
+  const results = await searchOfferPosts(
+    req.body?.company,
+    req.body?.jobTitle,
+    req.body?.batch,
+    req.body?.forceRefresh
+  );
   res.json(results);
 });
 

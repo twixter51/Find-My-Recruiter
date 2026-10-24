@@ -78,7 +78,7 @@ If PowerShell blocks `npm.ps1`, use `npm.cmd` instead of `npm`.
 4. Review the company and specialty, then select **Find recruiters**.
 5. Try **Find recruiters mentioned in offer posts** for another way to find contacts.
 
-When a preview includes a possible contact, its profile-search link opens a new recruiter search page. Select **Find recruiters** there to run that search.
+When a preview includes a possible contact, open the original LinkedIn post to review the name and context.
 
 If results are too narrow, clear the optional specialty. Sample postings are real listings and may close or change.
 
@@ -172,7 +172,7 @@ If saving fails, extracted job details still appear with a warning; they are not
 - **Not all postings are readable.** Sign-in requirements, bot protection, and JavaScript-rendered pages can prevent extraction. Fields may be missing.
 - **Job-page detection needs improvement.** A valid public URL is not necessarily a job posting; unrelated pages may produce incomplete or misleading details.
 - **Previews are incomplete.** Search snippets may omit acknowledgments. Name detection is a simple heuristic; check the original post to verify context.
-- **Results are limited.** Each search requests up to ten results before filtering. Pagination and an explicit refresh button are not implemented.
+- **Results are limited.** Each provider request asks for up to ten results before filtering. Offer-post searches support batches and forced refresh; direct profile searches now support up to 15 pages.
 - **The cache is temporary.** Identical queries reuse results for ten minutes. Restarting the server clears them, and separate server instances do not share the cache.
 - **Usage controls are basic.** A shared cooldown limits searches, but there are no per-user quotas or overall spending caps.
 
@@ -190,3 +190,52 @@ Before deploying, adapt the server binding and configuration for the selected ho
 - [ ] Improve offer-post name detection and contact relevance.
 - [ ] Add usage limits before broader public access.
 - [ ] Consider saved searches and accounts after validating the core workflow.
+
+
+## Recruiter thank-you post search
+
+Acknowledgment groups and recruiting terms live in `backend/offer-phrases.ts`.
+The job role stays specific to the posting and is editable before searching.
+
+- Each click of **Find more posts** advances to a different phrase group, then to the next results page. There are three groups across five pages (15 batches).
+- The browser stores seen post IDs and per-company/role search progress in localStorage. Reloading resumes progress and skips previously seen posts. New results are not guaranteed.
+- Preview mentions and acknowledgment text are optional. Search results remain visible even if Google omits the relevant part of the post. Visible mentions are shown as unverified leads; otherwise the user is prompted to open the post.
+- Each cycle starts with company + exact role + recruiting + acknowledgment wording, then tries broader role words without mandatory recruiting terms, then company + recruiting + acknowledgment wording without a role restriction.
+- These are candidate posts, not verified offers or recruiter endorsements. The app does not fetch full LinkedIn posts.
+
+- The cache indicator shows whether the current batch was fetched fresh or reused, plus its remaining ten-minute cache time.
+- **Refresh for new posts** advances to the next batch, bypasses its cache, and replaces the displayed list with unseen posts after a successful response. After all batches, it rechecks from the start. It does not clear unrelated entries or bypass the shared cooldown. Provider-side caching and identical search results are still possible.
+- New batches and forced refreshes may consume Serper credits. A failed request can be retried without skipping that batch.
+
+
+### Identifying contacts from post previews
+
+`backend/offer-contacts.ts` extracts names directly associated with recruiter or talent-acquisition role wording, such as "my recruiter, Nancy Li" or "Nancy Li, my recruiter". It handles names without an @ symbol. Each suggested contact includes the matching text as evidence and the original post link for manual review.
+
+Generic thank-you names and @handles are not automatically classified as recruiters. Posts without a clear recruiter name remain visible for manual inspection. This is heuristic extraction from search snippets, not verification of LinkedIn tags, identity, current employment, or recruiting ownership. Query variants, deduplication, cache countdown, and forced refresh remain available.
+
+
+### Browser history and page layout
+
+Both pages use a responsive, shared visual style. **Find new posts** appends unseen posts; **Refresh for new posts** replaces the list with unseen results from a fresh request. **Reset seen history** clears all remembered post IDs and search positions for this app in the current browser, allowing earlier posts to appear again. This does not delete Supabase job history. Browser storage is local to the device and origin; clearing site data also resets it. If storage is blocked or full, a visible message explains that deduplication only lasts for the current page. No new posts is a valid outcome; the app never promises that Google has more unique results.
+
+
+### Recruiter pages and resets
+
+Normal recruiter searches now request successive pages (up to 15) and skip profile IDs already shown in this browser. Progress is saved per company and specialty. Refresh results fetches the next page without using the application cache and replaces the displayed list with unseen profiles. At the page limit, refresh rechecks from page one while retaining seen history.
+
+Reset recruiter history clears all remembered recruiter profiles and page positions; Reset seen history in the post section clears all remembered posts and post-search positions. Each clears that section's display and restarts at page one/the first batch. Neither deletes Supabase job searches or clears the shared server cache. Repeat results can appear after a reset. Failures do not advance search progress.
+
+
+## Security follow-ups
+
+The current MVP has basic protections, but has not undergone a full security audit. Address these items before broader public use:
+
+- [ ] **Rotate exposed credentials.** Revoke any API keys shared accidentally and update the replacements locally and in Render. Never commit secret values.
+- [ ] **Limit API abuse.** Add per-IP rate limits to job fetching, recruiter searches, and post searches. Configure client-IP handling correctly behind the hosting proxy.
+- [ ] **Cap search spending.** Enforce a daily provider-request budget, including pagination and forced refreshes. Keep the budget effective across restarts and multiple server instances.
+- [ ] **Prevent database spam.** Limit job-search submissions and define a retention policy for saved records.
+- [ ] **Review history privacy.** Recent job titles, companies, and dates are shared publicly in this demo. Retain the notice and implement per-user access controls before offering private search history.
+- [ ] **Test URL-fetching protections.** Verify SSRF defenses against private and loopback addresses, IPv6 variants, redirects, and DNS rebinding. Retain response-size and timeout limits.
+
+Existing protections include backend-only API keys, Git-ignored environment files, text-based rendering of external content, and public-address checks for fetched job pages. These reduce risk but do not replace the work above. Prioritize credential rotation, rate limits, and a total search budget.

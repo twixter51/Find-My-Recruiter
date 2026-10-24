@@ -1,3 +1,5 @@
+import { extractOfferContacts } from "./offer-contacts";
+import { acknowledgmentGroups, recruiterTerms } from "./offer-phrases";
 import { PostingError } from "./posting-page";
 
 interface Recruiter {
@@ -8,6 +10,7 @@ interface Recruiter {
 interface SearchResults {
   query: string;
   recruiters: Recruiter[];
+  cache: SearchResponse["cache"];
 }
 
 // Repeated searches reuse results for ten minutes instead of spending credits.
@@ -113,12 +116,8 @@ export function extractRecruiters(data: unknown): Recruiter[] {
       continue;
     }
 
-    const snippet = typeof item.snippet === "string" ? item.snippet : "";
-
-    if (!/recruit|talent acquisition/i.test(`${item.title} ${snippet}`)) {
-      continue;
-    }
-
+    // The query targets recruiting, but Google may omit those words from
+    // the preview. Keep valid profiles as unverified potential contacts.
     const profileId = profile[1].toLowerCase();
 
     if (seen.has(profileId)) {
@@ -142,13 +141,25 @@ export function extractRecruiters(data: unknown): Recruiter[] {
   return recruiters;
 }
 
-export async function searchRecruiters(company: unknown, team: unknown): Promise<SearchResults> {
+export async function searchRecruiters(company: unknown, team: unknown, forceRefresh: unknown = false, page: unknown = 1): Promise<SearchResults> {
+  if (typeof forceRefresh !== "boolean") {
+    throw new PostingError("Refresh must be true or false.", 400);
+  }
+
+  if (typeof page !== "number" || !Number.isInteger(page) || page < 1 || page > 15) {
+    throw new PostingError("Page must be an integer from 1 to 15.", 400);
+  }
+
   const query = buildRecruiterQuery(company, team);
-  const data = await runSearch(query);
-  return { query, recruiters: extractRecruiters(data) };
+  const result = await runSearch(query, page, forceRefresh);
+  return {
+    query,
+    recruiters: extractRecruiters(result.data),
+    cache: result.cache,
+  };
 }
 
-export function buildOfferQuery(company: unknown, jobTitle: unknown): string {
+export function buildOfferQuery(company: unknown, jobTitle: unknown, variation = 0): string {
   const employer = normalizeRecruiterSearch(cleanField(company, true), "").company;
 
   if (jobTitle !== undefined && typeof jobTitle !== "string") {
@@ -157,8 +168,12 @@ export function buildOfferQuery(company: unknown, jobTitle: unknown): string {
 
   // Drop posting-specific details while preserving the actual role wording.
   cleanField(jobTitle, false);
-  const rawTitle = typeof jobTitle === "string" ? jobTitle : "";
-  const title = cleanField(rawTitle.split(/,|\s[|??-]\s|\(/)[0], false);
+  let rawTitle = "";
+
+  if (typeof jobTitle === "string") {
+    rawTitle = jobTitle;
+  }
+  const title = cleanField(rawTitle.split(/,|\s[|\u2013\u2014-]\s|\(/)[0], false);
   const role = title
     .replace(/\b(?:internship|intern|co-op|new grad(?:uate)?|entry level)\b/gi, " ")
     .replace(/^(?:senior|junior|sr\.?|jr\.?)\s+/i, "")
@@ -172,12 +187,21 @@ export function buildOfferQuery(company: unknown, jobTitle: unknown): string {
     `"${employer}"`,
   ];
 
-  if (role) {
-    parts.push(`"${role}"`);
+  if (role && variation < 2) {
+    if (variation === 0) {
+      parts.push(`"${role}"`);
+    } else {
+      const roleWords = role.split(/\s+/).map((word) => `"${word}"`);
+      parts.push(`(${roleWords.join(" OR ")})`);
+    }
   }
 
-  parts.push('(recruiter OR "recruiting team" OR "talent acquisition")');
-  parts.push('("thank you" OR "special thanks" OR "thanks to" OR "shoutout" OR "shout out" OR "grateful to")');
+  const recruitingWords = recruiterTerms.map((word) => `"${word}"`).join(" OR ");
+  const thanksWords = acknowledgmentGroups[variation].map((word) => `"${word}"`).join(" OR ");
+  if (variation !== 1) {
+    parts.push(`(${recruitingWords})`);
+  }
+  parts.push(`(${thanksWords})`);
   return parts.join(" ");
 }
 
@@ -219,33 +243,61 @@ export function extractOfferPosts(data: unknown) {
     }
 
     seen.add(url.href);
-    const snippet = typeof item.snippet === "string" ? item.snippet : "";
-    // Only suggest a name when a thanks phrase directly precedes it.
-    // This is a possible contact, not proof that the person is a recruiter.
-    const mention = snippet.match(/(?:[Tt]hanks to|[Tt]hank you to|[Tt]hank my recruiter|[Tt]hanks to my recruiter|[Ss]pecial thanks to|[Ss]houtout to|[Ss]hout out to|[Gg]rateful to)\s+@?([\p{Lu}][\p{L}'’-]+(?:\s+[\p{Lu}][\p{L}'’-]+){1,3})(?=\s|[,.!]|$)/u);
+    let snippet = "";
+
+    if (typeof item.snippet === "string") {
+      snippet = item.snippet;
+    }
+
+    // Only analyze the snippet, not the author/title joined to it.
+    // Joining separate fields can create a relationship the source never stated.
+    const contacts = extractOfferContacts(snippet);
 
     posts.push({
       title: item.title,
       url: url.href,
       snippet,
-      mentionedName: mention?.[1] || "",
+      contacts,
     });
   }
 
   return posts;
 }
 
-export async function searchOfferPosts(company: unknown, jobTitle?: unknown) {
-  const query = buildOfferQuery(company, jobTitle);
-  const data = await runSearch(query);
-  return { query, posts: extractOfferPosts(data) };
+export async function searchOfferPosts(company: unknown, jobTitle?: unknown, batch: unknown = 0, forceRefresh: unknown = false) {
+  if (!Number.isInteger(batch) || typeof batch !== "number" || batch < 0 || batch >= 15) {
+    throw new PostingError("Search batch must be an integer from 0 to 14.", 400);
+  }
+
+  if (typeof forceRefresh !== "boolean") {
+    throw new PostingError("Refresh must be true or false.", 400);
+  }
+
+  const variation = batch % acknowledgmentGroups.length;
+  const page = Math.floor(batch / acknowledgmentGroups.length) + 1;
+  const query = buildOfferQuery(company, jobTitle, variation);
+  const result = await runSearch(query, page, forceRefresh);
+  return {
+    query,
+    batch,
+    page,
+    hasMore: batch < 14,
+    posts: extractOfferPosts(result.data),
+    cache: result.cache,
+  };
 }
 
-async function runSearch(query: string): Promise<unknown> {
-  const cached = cache.get(query);
+interface SearchResponse {
+  data: unknown;
+  cache: { hit: boolean; expiresAt: number; remainingSeconds: number };
+}
 
-  if (cached && cached.expires > Date.now()) {
-    return cached.results;
+async function runSearch(query: string, page = 1, forceRefresh = false): Promise<SearchResponse> {
+  const cacheKey = JSON.stringify({ query, page });
+  const cached = cache.get(cacheKey);
+
+  if (!forceRefresh && cached && cached.expires > Date.now()) {
+    return makeSearchResponse(cached.results, cached.expires, true);
   }
 
   const apiKey = process.env.SERPER_API_KEY?.trim();
@@ -268,7 +320,7 @@ async function runSearch(query: string): Promise<unknown> {
         "X-API-KEY": apiKey,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ q: query, num: 10 }),
+      body: JSON.stringify({ q: query, num: 10, page }),
       signal: AbortSignal.timeout(15000),
       redirect: "error",
     });
@@ -291,8 +343,14 @@ async function runSearch(query: string): Promise<unknown> {
       cache.clear();
     }
 
-    cache.set(query, { expires: Date.now() + 600000, results });
-    return results;
+    if (!results || !Array.isArray((results as { organic?: unknown }).organic)) {
+      throw new PostingError("The search service returned an unexpected response.", 502);
+    }
+
+    const expires = Date.now() + 600000;
+    cache.set(cacheKey, { expires, results });
+
+    return makeSearchResponse(results, expires, false);
   } catch (error) {
     if (error instanceof PostingError) {
       throw error;
@@ -303,4 +361,15 @@ async function runSearch(query: string): Promise<unknown> {
   } finally {
     searchInProgress = false;
   }
+}
+
+function makeSearchResponse(data: unknown, expiresAt: number, hit: boolean): SearchResponse {
+  return {
+    data,
+    cache: {
+      hit,
+      expiresAt,
+      remainingSeconds: Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000)),
+    },
+  };
 }

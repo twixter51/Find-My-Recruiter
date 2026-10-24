@@ -8,37 +8,59 @@
     <script src="dist/recruiters.js" defer></script>
   </head>
   <body>
-    <main>
-      <a href="index.html">Back to job posting</a>
-      <h1 class="results-heading">Recruiter results</h1>
+    <header class="site-header"><a class="brand" href="index.html">Find My Rec<span class="brand-dot">.</span></a><a href="index.html">New job search &rarr;</a></header>
+    <main class="results-page">
+
+      <h1 class="results-heading">Your results...</h1>
       <p id="recruiter-context"></p>
       <p class="note">Potential contacts, not confirmed recruiters for this opening.</p>
 
+      <section class="search-panel" aria-label="Recruiter profiles">
+      <h2>Start with recruiters</h2>
       <form id="recruiter-search-form">
         <label for="search-company">Company name</label>
         <input id="search-company" name="company" required maxlength="200" />
         <label for="search-team">Team or specialty (optional)</label>
         <input id="search-team" name="team" maxlength="200" />
-        <button type="submit">Find recruiters</button>
+        <div class="search-actions">
+          <button type="submit">Find recruiters</button>
+          <button id="refresh-recruiters" type="submit">Refresh results</button>
+          <button id="reset-recruiters" class="reset-button" type="button" aria-label="Reset recruiter history">Reset history</button>
+        </div>
       </form>
       <p class="note">Use the company's common name. Broaden the search by leaving the specialty blank.</p>
-      <p id="recruiter-query" class="note"></p>
+      <details class="query-details"><summary>Search details &amp; history</summary><p id="recruiter-query" class="note"></p>
+        <p id="recruiter-history-note" class="note"></p>
+      </details>
 
       <p id="recruiter-status" role="status">
         Review the company and specialty, then select Find recruiters.
       </p>
       <ul id="recruiter-list" class="recruiter-list" aria-label="Recruiter profiles" hidden></ul>
-      <section aria-labelledby="offer-heading">
-        <h2 id="offer-heading">Contacts from offer announcements</h2>
-        <p class="note">Find posts thanking recruiting contacts for this company and role. Open a post to check who was thanked; they may be a recruiter, mentor, or interviewer. Search previews may omit names.</p>
-        <label for="offer-role">Job title for offer-post search (optional)</label>
+      </section>
+      <section class="offer-section" aria-labelledby="offer-heading">
+        <p class="eyebrow">FOLLOW THE THANK-YOUS</p>
+        <h2 id="offer-heading">Thank-you posts</h2>
+        <p class="note">Find recruiting contacts in offer announcements. Confirm names in the original post.</p>
+        <label for="offer-role">Role (optional)</label>
         <input id="offer-role" maxlength="200" placeholder="e.g. Data Analyst" />
-        <p id="offer-query" class="note"></p>
-        <button id="find-offer-posts" type="button">Find recruiters mentioned in offer posts</button>
+        <div class="search-actions">
+          <button id="find-offer-posts" type="button">Find new posts</button>
+          <button id="refresh-offers" type="button">Refresh results</button>
+          <button id="reset-offer-history" class="reset-button" type="button" aria-label="Reset post history">Reset history</button>
+        </div>
+        <details class="query-details">
+          <summary>Search details &amp; history</summary>
+          <p id="offer-query" class="note"></p>
+          <p id="offer-cache" class="note"></p>
+          <p id="offer-history-note" class="note"></p>
+          <p class="note">Searches use credits. New results aren't guaranteed.</p>
+        </details>
         <p id="offer-status" role="status"></p>
         <ul id="offer-list" class="recruiter-list" aria-label="Offer announcements" hidden></ul>
       </section>
       <script src="dist/offer-posts.js" defer></script>
     </main>
+    <footer>Good connections start with a little research.</footer>
   </body>
 </html>
