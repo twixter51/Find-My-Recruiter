@@ -4,17 +4,19 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Find My Rec</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;450;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="dist/main.js" defer></script>
     <script src="dist/recent-searches.js" defer></script>
   </head>
   <body>
-    <header class="site-header"><a class="brand" href="index.html">Find My Rec<span class="brand-dot">.</span></a><span class="header-note">A better starting point.</span></header>
+    <header class="site-header"><a class="brand" href="index.html">Find My Rec</a><a class="header-link" href="#sample-heading">Try an example</a></header>
     <main>
       <div class="hero">
-        <p class="eyebrow">FROM JOB POSTING TO PEOPLE</p>
-        <h1>Open New Doors.</h1>
-        <p class="intro">You found a role you like. Find My Rec helps you discover recruiting contacts and the conversations that could lead you to them.</p>
+        <h1>Search</h1>
+        <p class="intro">Find recruiter profiles</p>
       </div>
 
       <form id="job-form" class="search-panel">
@@ -29,18 +31,16 @@
         />
 
         <button type="submit">Read job posting</button>
-        <p id="search-note" class="note">Paste a public job posting link. Some sites require sign-in or block automated reading.</p>
+        <p id="search-note" class="note">Public job links only. Some sites block automated reading.</p>
         <p id="search-status" role="status" aria-live="polite"></p>
         
       </form>
 
-      <div class="steps"><p><span>01</span> Paste a job link</p><p><span>02</span> Explore contacts</p><p><span>03</span> Make your introduction</p></div>
       <section class="sample-jobs" aria-labelledby="sample-heading">
-        <h2 id="sample-heading">Try a sample job</h2>
-        <p class="note">Select Use sample to fill the form, then select Read job posting. You can also open or copy the posting link.</p>
+        <h2 id="sample-heading">Or try an example</h2>
         <ul class="sample-list">
           <li>
-            <strong>Sample: Amazon</strong>
+            <strong>Amazon</strong>
             <a href="https://www.amazon.jobs/en/jobs/10529525/software-development-engineer-intern-co-op-robotics-2027" target="_blank" rel="noopener noreferrer">Software Development Engineer Intern/Co-Op, Robotics — 2027</a>
             <div class="sample-actions">
               <button type="button" data-sample-action="use" aria-label="Use Amazon sample">Use sample</button>
@@ -48,7 +48,7 @@
             </div>
           </li>
           <li>
-            <strong>Sample: Zip</strong>
+            <strong>Zip</strong>
             <a href="https://jobs.ashbyhq.com/zip/249837b3-106f-4751-a4f2-03a2c5df5faf" target="_blank" rel="noopener noreferrer">Software Engineer Intern — Summer 2027</a>
             <div class="sample-actions">
               <button type="button" data-sample-action="use" aria-label="Use Zip sample">Use sample</button>
@@ -62,14 +62,14 @@
 
 
 
-      <section class="history-section" aria-labelledby="recent-heading">
-        <h2 id="recent-heading">Recent searches</h2>
-        <p class="note">Shared demo history: job titles, companies, and search dates are visible to all visitors. Job links are saved on the server.</p>
+      <details class="history-section">
+        <summary id="recent-heading">Recent searches</summary>
+        <p class="note">Shared demo history. Titles, companies, and dates are public.</p>
         <button id="refresh-history" type="button">Refresh recent searches</button>
         <p id="history-status" role="status"></p>
         <ul id="history-list" class="recruiter-list"></ul>
-      </section>
+      </details>
     </main>
-    <footer>Find My Rec <span>Built for the next step in your career.</span></footer>
+    <footer>Find My Rec</footer>
   </body>
 </html>

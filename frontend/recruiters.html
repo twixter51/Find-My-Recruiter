@@ -4,19 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Recruiter results | Find My Rec</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;450;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="dist/recruiters.js" defer></script>
   </head>
   <body>
-    <header class="site-header"><a class="brand" href="index.html">Find My Rec<span class="brand-dot">.</span></a><a href="index.html">New job search &rarr;</a></header>
+    <header class="site-header"><a class="brand" href="index.html">Find My Rec</a><a href="index.html">New job search &rarr;</a></header>
     <main class="results-page">
 
-      <h1 class="results-heading">Your results...</h1>
+      <h1 class="results-heading">Results...</h1>
       <p id="recruiter-context"></p>
       <p class="note">Potential contacts, not confirmed recruiters for this opening.</p>
 
       <section class="search-panel" aria-label="Recruiter profiles">
-      <h2>Start with recruiters</h2>
+      <h2>Recruiter profiles</h2>
       <form id="recruiter-search-form">
         <label for="search-company">Company name</label>
         <input id="search-company" name="company" required maxlength="200" />
@@ -38,29 +41,7 @@
       </p>
       <ul id="recruiter-list" class="recruiter-list" aria-label="Recruiter profiles" hidden></ul>
       </section>
-      <section class="offer-section" aria-labelledby="offer-heading">
-        <p class="eyebrow">FOLLOW THE THANK-YOUS</p>
-        <h2 id="offer-heading">Thank-you posts</h2>
-        <p class="note">Find recruiting contacts in offer announcements. Confirm names in the original post.</p>
-        <label for="offer-role">Role (optional)</label>
-        <input id="offer-role" maxlength="200" placeholder="e.g. Data Analyst" />
-        <div class="search-actions">
-          <button id="find-offer-posts" type="button">Find new posts</button>
-          <button id="refresh-offers" type="button">Refresh results</button>
-          <button id="reset-offer-history" class="reset-button" type="button" aria-label="Reset post history">Reset history</button>
-        </div>
-        <details class="query-details">
-          <summary>Search details &amp; history</summary>
-          <p id="offer-query" class="note"></p>
-          <p id="offer-cache" class="note"></p>
-          <p id="offer-history-note" class="note"></p>
-          <p class="note">Searches use credits. New results aren't guaranteed.</p>
-        </details>
-        <p id="offer-status" role="status"></p>
-        <ul id="offer-list" class="recruiter-list" aria-label="Offer announcements" hidden></ul>
-      </section>
-      <script src="dist/offer-posts.js" defer></script>
     </main>
-    <footer>Good connections start with a little research.</footer>
+    <footer>Find My Rec <a href="index.html">Search another job</a></footer>
   </body>
 </html>
