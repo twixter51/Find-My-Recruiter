@@ -515,6 +515,13 @@ footer {
   .usage-notice {
     margin-top: 56px;
   }
+
+  /* Match the primary column, excluding the sidebar and its 48px gap. */
+  .with-sidebar + footer {
+    width: min(760px, calc(100% - 336px));
+    margin-left: max(24px, calc((100% - 1080px) / 2));
+    margin-right: auto;
+  }
 }
 
 .usage-notice h2 {
