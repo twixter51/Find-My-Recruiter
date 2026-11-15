@@ -466,8 +466,8 @@ footer {
 
 @keyframes example-wiggle {
   0%, 12%, 100% { transform: translateX(0); }
-  3%, 9% { transform: translateX(-2px); }
-  6% { transform: translateX(2px); }
+  3%, 9% { transform: translateX(-3x); }
+  6% { transform: translateX(3px); }
 }
 
 .example-link:hover,
