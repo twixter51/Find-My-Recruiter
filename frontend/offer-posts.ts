@@ -1,5 +1,7 @@
 // IDs stay in this browser; no account or private profile data is stored.
-const offerHistoryKey = "find-my-rec:offer-history:v1";
+function offerHistoryKey(): string {
+  return `find-my-rec:offer-history:v2:${accountUserId}`;
+}
 interface OfferHistory {
   seen: string[];
   cursors: Record<string, number>;
@@ -7,7 +9,7 @@ interface OfferHistory {
 
 function readOfferHistory(): OfferHistory {
   try {
-    const saved = JSON.parse(localStorage.getItem(offerHistoryKey) || "null");
+    const saved = JSON.parse(localStorage.getItem(offerHistoryKey()) || "null");
 
     if (saved && Array.isArray(saved.seen) && saved.cursors && typeof saved.cursors === "object") {
       return {
@@ -23,7 +25,7 @@ function readOfferHistory(): OfferHistory {
 }
 
 // Offer searches are separate so they don't replace the direct recruiter results.
-function initializeOfferSearch(): void {
+async function initializeOfferSearch(): Promise<void> {
   const button = document.querySelector<HTMLButtonElement>("#find-offer-posts");
   const companyInput = document.querySelector<HTMLInputElement>("#search-company");
   const status = document.querySelector<HTMLParagraphElement>("#offer-status");
@@ -45,6 +47,18 @@ function initializeOfferSearch(): void {
   const cacheLabel = document.querySelector<HTMLElement>("#offer-cache");
 
   if (!refreshButton || !cacheLabel) {
+    return;
+  }
+
+  try {
+    if (!await updateAccount()) {
+      button.disabled = true;
+      refreshButton.disabled = true;
+      status.textContent = "Log in to search posts.";
+      return;
+    }
+  } catch {
+    status.textContent = "Account service unavailable. Reload to try again.";
     return;
   }
 
@@ -76,7 +90,7 @@ function initializeOfferSearch(): void {
     history.cursors[searchKey()] = nextBatch;
 
     try {
-      localStorage.setItem(offerHistoryKey, JSON.stringify(history));
+      localStorage.setItem(offerHistoryKey(), JSON.stringify(history));
 
       if (historyNote) {
         historyNote.textContent = `${seenPosts.size} posts remembered in this browser.`;
@@ -163,13 +177,14 @@ function initializeOfferSearch(): void {
     status.textContent = "Finding posts...";
 
     try {
-      const response = await fetch("/api/offer-posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ company: employer, jobTitle: roleInput.value.trim(), batch, forceRefresh }),
-        signal: AbortSignal.timeout(20000),
+      const response = await creditSearch("/api/offer-posts", {
+        company: employer,
+        jobTitle: roleInput.value.trim(),
+        batch,
+        forceRefresh,
       });
       const data = await response.json();
+      void updateAccount().catch(() => {});
 
       if (submittedVersion !== version) {
         return;
@@ -307,4 +322,4 @@ function initializeOfferSearch(): void {
   });
 }
 
-initializeOfferSearch();
+void initializeOfferSearch();

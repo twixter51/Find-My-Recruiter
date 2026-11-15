@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc -p frontend/tsconfig.json && tsc -p backend/tsconfig.json",
     "start": "npm run build && node backend/dist/server.js",
-    "watch": "tsc -p frontend/tsconfig.json --watch"
+    "watch": "tsc -p frontend/tsconfig.json --watch",
+    "test": "npm run build && node --test tests/*.test.cjs"
   },
   "keywords": [],
   "author": "",

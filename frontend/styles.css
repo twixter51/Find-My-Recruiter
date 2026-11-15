@@ -1,10 +1,10 @@
 /* Shared, compact layout. No framework or decorative components. */
 :root {
-  color-scheme: light;
-  --ink: #202327;
-  --muted: #626870;
-  --line: #dfe2e6;
-  --accent: #244fc4;
+  color-scheme: dark;
+  --ink: #f2f3f5;
+  --muted: #b4b7be;
+  --line: #393b43;
+  --accent: #c9dcff;
 }
 
 * {
@@ -13,7 +13,7 @@
 
 body {
   margin: 0;
-  background: #fff;
+  background: #202227;
   color: var(--ink);
   font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
   font-size: 15px;
@@ -30,7 +30,6 @@ a:hover {
   text-decoration-thickness: 2px;
 }
 
-.site-header,
 main,
 footer {
   width: min(760px, calc(100% - 48px));
@@ -41,16 +40,40 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  padding: 24px 0;
-  border-bottom: 1px solid var(--line);
+  gap: 24px;
+  min-height: 54px;
+  padding: 0 max(24px, calc((100vw - 900px) / 2));
+  background: #191a1f;
+  border-bottom: 1px solid #111216;
 }
+
+.site-header nav {
+  display: flex;
+  gap: 32px;
+  align-self: stretch;
+}
+
+.site-header nav a {
+  display: flex;
+  align-items: center;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+}
+
+.site-header nav a:hover,
+.site-header nav a[aria-current="page"] {
+  border-bottom-color: #f2f3f5;
+}
+
 
 .brand {
   color: var(--ink);
   text-decoration: none;
-  font-size: 17px;
+  font-size: 22px;
   font-weight: 600;
+  white-space: nowrap;
   letter-spacing: -.5px;
 }
 
@@ -59,7 +82,8 @@ footer {
 }
 
 .hero {
-  padding: 64px 0 22px;
+  text-align: center;
+  padding: 56px 0 8px;
 }
 
 h1 {
@@ -80,12 +104,16 @@ h2 {
 .intro {
   color: var(--muted);
   max-width: 490px;
-  margin: 0;
+  margin: 0 auto;
   font-size: 16px;
 }
 
 .search-panel {
   margin: 24px 0 36px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #272930;
 }
 
 label {
@@ -107,12 +135,12 @@ input {
   min-width: 0;
   padding: 11px 12px;
   color: var(--ink);
-  background: #fff;
+  background: #202227;
   border: 1px solid #aeb5bf;
 }
 
 input::placeholder {
-  color: #737b86;
+  color: #a8adb7;
 }
 
 button {
@@ -120,14 +148,14 @@ button {
   padding: 10px 16px;
   margin: 12px 0 0;
   border: 1px solid var(--ink);
-  background: var(--ink);
-  color: #fff;
+  background: #f2f3f5;
+  color: #191a1f;
   font-size: 13px;
   font-weight: 500;
 }
 
 button:hover {
-  background: #353c46;
+  background: #d9dce2;
 }
 
 button:disabled {
@@ -199,14 +227,14 @@ summary,
 #refresh-offers {
   color: var(--ink);
   border-color: var(--line);
-  background: white;
+  background: #272930;
 }
 
 .sample-actions button:hover,
 #refresh-history:hover,
 #refresh-recruiters:hover,
 #refresh-offers:hover {
-  background: #f2f4f6;
+  background: #383b44;
 }
 
 .history-section {
@@ -231,7 +259,8 @@ summary {
 }
 
 .offer-section {
-  padding: 30px 0;
+  margin-bottom: 32px;
+  padding: 24px 0;
   border-top: 1px solid var(--line);
 }
 
@@ -244,13 +273,13 @@ summary {
 }
 
 .reset-button {
-  color: #a42929;
-  border-color: #e7bbbb;
-  background: #fff;
+  color: #ffaaa5;
+  border-color: #95514f;
+  background: #202227;
 }
 
 .reset-button:hover {
-  background: #fff1f1;
+  background: #482a2c;
 }
 
 .query-details {
@@ -304,7 +333,6 @@ footer {
 }
 
 @media (max-width: 560px) {
-  .site-header,
   main,
   footer {
     width: calc(100% - 32px);
@@ -330,4 +358,140 @@ footer {
   .search-actions button {
     flex: 1 1 auto;
   }
+}
+
+#offer-heading,
+#job-url {
+  scroll-margin-top: 24px;
+}
+
+@media (max-width: 800px) {
+  .site-header {
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    padding: 12px 16px;
+  }
+
+  .site-header nav {
+    gap: 20px;
+    min-height: 36px;
+  }
+}
+
+@media (max-width: 560px) {
+  .search-panel,
+  .offer-section {
+    padding: 16px;
+  }
+}
+
+/* Keep the landing page focused on a single input and action. */
+.job-entry {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.job-entry button {
+  margin: 0;
+  white-space: nowrap;
+}
+
+#job-form label {
+  margin-top: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -80px;
+  left: 16px;
+  padding: 12px;
+  background: #191a1f;
+  z-index: 10;
+}
+
+.skip-link:focus {
+  top: 8px;
+}
+
+@media (max-width: 560px) {
+  .job-entry {
+    flex-direction: column;
+  }
+
+  .site-header nav {
+    gap: 16px;
+    font-size: 13px;
+  }
+}
+
+/* Account forms use the same compact dark surfaces as the search pages. */
+.auth-page {
+  max-width: 440px;
+  padding-top: 40px;
+}
+
+.auth-page h1 {
+  font-size: 30px;
+}
+
+.auth-page button {
+  width: 100%;
+}
+
+.secondary-button {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
+}
+
+.placeholder-list {
+  display: grid;
+  gap: 12px;
+  opacity: .35;
+  filter: blur(4px);
+}
+
+.placeholder-list div {
+  height: 48px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #747982 0 18%, #383b43 18% 100%);
+}
+
+/* A short wiggle with a pause keeps the example link noticeable but calm. */
+.example-link {
+  display: inline-block;
+  animation: example-wiggle 6s ease-in-out 3;
+}
+
+@keyframes example-wiggle {
+  0%, 12%, 100% { transform: translateX(0); }
+  3%, 9% { transform: translateX(-2px); }
+  6% { transform: translateX(2px); }
+}
+
+.example-link:hover,
+.example-link:focus-visible {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .example-link {
+    animation: none;
+  }
+}
+
+#account-status.credits-empty {
+  color: #ff8585;
+}
+
+#account-status.credits-unlimited{
+  color:#1651e6
+}
+
+#logout {
+  margin: 0;
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line);
 }

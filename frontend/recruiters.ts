@@ -63,10 +63,20 @@ function showRecruiterResults(recruiters: Recruiter[], seen: Set<string>): numbe
   return added;
 }
 
-function initializeRecruiterPage(): void {
+async function initializeRecruiterPage(): Promise<void> {
   const context = document.querySelector<HTMLParagraphElement>("#recruiter-context");
 
   if (!context) {
+    return;
+  }
+
+  try {
+    if (!await updateAccount()) {
+      window.location.assign("auth.html");
+      return;
+    }
+  } catch {
+    context.textContent = "Account service unavailable. Reload to try again.";
     return;
   }
 
@@ -108,7 +118,7 @@ function initializeRecruiterPage(): void {
   const refreshButton = document.querySelector<HTMLButtonElement>("#refresh-recruiters");
   const resetButton = document.querySelector<HTMLButtonElement>("#reset-recruiters");
   const historyNote = document.querySelector<HTMLElement>("#recruiter-history-note");
-  const storageKey = "find-my-rec:recruiter-history:v1";
+  const storageKey = `find-my-rec:recruiter-history:v2:${accountUserId}`;
   let savedPages: Record<string, number> = {};
   const seen = new Set<string>();
   let nextPage = 1;
@@ -217,21 +227,15 @@ function initializeRecruiterPage(): void {
     searchStatus.textContent = "Searching for recruiter profiles...";
 
     try {
-      const response = await fetch("/api/recruiters", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          company: companyInput.value.trim(),
-          team: teamInput.value.trim(),
-          forceRefresh,
-          page,
-        }),
-        signal: AbortSignal.timeout(20000),
+      const response = await creditSearch("/api/recruiters", {
+        company: companyInput.value.trim(),
+        team: teamInput.value.trim(),
+        forceRefresh,
+        page,
       });
 
       const data = await response.json();
+      void updateAccount().catch(() => {});
 
       if (submittedVersion !== searchVersion) {
         return;
@@ -297,6 +301,15 @@ function initializeRecruiterPage(): void {
       }
     }
   });
+  // Only the explicit job flow triggers one automatic, credit-backed search.
+  if (parameters.get("auto") === "1") {
+    parameters.delete("auto");
+    history.replaceState(null, "", `recruiters.html?${parameters}`);
+    nextPage = 1;
+    button.disabled = false;
+    searchForm.requestSubmit();
+  }
+
 }
 
-initializeRecruiterPage();
+void initializeRecruiterPage();

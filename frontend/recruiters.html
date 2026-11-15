@@ -8,15 +8,26 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;450;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
+    <script src="dist/account.js" defer></script>
     <script src="dist/recruiters.js" defer></script>
+    <script src="dist/offer-posts.js" defer></script>
   </head>
   <body>
-    <header class="site-header"><a class="brand" href="index.html">Find My Rec</a><a href="index.html">New job search &rarr;</a></header>
-    <main class="results-page">
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="index.html">FIND MY REC</a>
+      <nav aria-label="Main navigation">
+        <a id="account-status" href="auth.html">Log in / Sign up</a>
+        <button id="logout" type="button" hidden>Log out</button>
+        <a href="index.html">New job search</a>
+        <a href="#offer-heading">Thank-you posts</a>
+      </nav>
+    </header>
+    <main id="main-content" class="results-page">
 
-      <h1 class="results-heading">Results...</h1>
+      <h1 class="results-heading">Explore contacts</h1>
       <p id="recruiter-context"></p>
-      <p class="note">Potential contacts, not confirmed recruiters for this opening.</p>
+      <p class="note">Potential contacts, not confirmed recruiters. Each search, next page, or refresh uses 1 credit. Resetting history does not restore credits.</p>
 
       <section class="search-panel" aria-label="Recruiter profiles">
       <h2>Recruiter profiles</h2>
@@ -31,15 +42,35 @@
           <button id="reset-recruiters" class="reset-button" type="button" aria-label="Reset recruiter history">Reset history</button>
         </div>
       </form>
-      <p class="note">Use the company's common name. Broaden the search by leaving the specialty blank.</p>
+      <p class="note">Leave the specialty blank for a broader search.</p>
       <details class="query-details"><summary>Search details &amp; history</summary><p id="recruiter-query" class="note"></p>
         <p id="recruiter-history-note" class="note"></p>
       </details>
 
       <p id="recruiter-status" role="status">
-        Review the company and specialty, then select Find recruiters.
+        Ready when you are.
       </p>
       <ul id="recruiter-list" class="recruiter-list" aria-label="Recruiter profiles" hidden></ul>
+      </section>
+      <section class="offer-section" aria-labelledby="offer-heading">
+        <h2 id="offer-heading">Thank-you posts</h2>
+        <p class="note">Find recruiting contacts in offer announcements. Confirm names in the original post.</p>
+        <label for="offer-role">Role (optional)</label>
+        <input id="offer-role" maxlength="200" placeholder="e.g. Data Analyst" />
+        <div class="search-actions">
+          <button id="find-offer-posts" type="button">Find new posts</button>
+          <button id="refresh-offers" type="button">Refresh results</button>
+          <button id="reset-offer-history" class="reset-button" type="button" aria-label="Reset post history">Reset history</button>
+        </div>
+        <details class="query-details">
+          <summary>Search details &amp; history</summary>
+          <p id="offer-query" class="note"></p>
+          <p id="offer-cache" class="note"></p>
+          <p id="offer-history-note" class="note"></p>
+          <p class="note">Searches use credits. New results aren't guaranteed.</p>
+        </details>
+        <p id="offer-status" role="status"></p>
+        <ul id="offer-list" class="recruiter-list" aria-label="Offer announcements" hidden></ul>
       </section>
     </main>
     <footer>Find My Rec <a href="index.html">Search another job</a></footer>

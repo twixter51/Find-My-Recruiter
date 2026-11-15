@@ -314,6 +314,7 @@ async function runSearch(query: string, page = 1, forceRefresh = false): Promise
   nextSearchTime = Date.now() + 3000;
 
   try {
+    await reserveProviderCall();
     const response = await fetch("https://google.serper.dev/search", {
       method: "POST",
       headers: {
@@ -373,3 +374,4 @@ function makeSearchResponse(data: unknown, expiresAt: number, hit: boolean): Sea
     },
   };
 }
+import { reserveProviderCall } from "./usage-limits";

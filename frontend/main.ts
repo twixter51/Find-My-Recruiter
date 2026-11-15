@@ -31,7 +31,7 @@ document.querySelectorAll<HTMLButtonElement>("[data-sample-action]").forEach((bu
         feedback.textContent = "Copy isn't available. The link is selected in the form so you can copy it manually.";
       }
     } else {
-      feedback.textContent = "Sample ready. Select Read job posting to try it.";
+      feedback.textContent = "Sample ready. Select Find contacts.";
     }
 
     jobInput.value = link.href;
@@ -91,6 +91,13 @@ form.addEventListener("submit", async (event) => {
   statusMessage.textContent = "Reading job posting...";
 
   try {
+    // Preserve the intended job and show locked placeholders before any API search.
+    if (!await updateAccount()) {
+      const pending = new URLSearchParams({ jobUrl: jobUrl.href });
+      window.location.assign(`auth.html?${pending}`);
+      return;
+    }
+
     const response = await fetch("/api/search", {
       method: "POST",
       headers: {
@@ -129,6 +136,7 @@ form.addEventListener("submit", async (event) => {
     }
 
     const parameters = new URLSearchParams({
+      auto: "1",
       title: data.job.title,
       company: data.recruiterSearch?.company ?? data.job.company,
       team: data.recruiterSearch?.team ?? data.job.team,
@@ -159,3 +167,13 @@ form.addEventListener("submit", async (event) => {
   }
 });
 
+
+// Returning from login resumes the job once. Remove the flag before submission
+// so reloading cannot accidentally repeat the automatic search.
+const resumeParameters = new URLSearchParams(window.location.search);
+
+if (resumeParameters.get("resume") === "1" && resumeParameters.get("jobUrl")) {
+  jobInput.value = resumeParameters.get("jobUrl") || "";
+  history.replaceState(null, "", "index.html");
+  form.requestSubmit();
+}
