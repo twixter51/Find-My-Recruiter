@@ -21,7 +21,8 @@
         <button id="logout" type="button" hidden>Log out</button>
       </nav>
     </header>
-    <main id="main-content">
+    <main id="main-content" class="with-sidebar">
+      <div class="page-primary">
       <div class="hero">
         <h1>Find recruiters for<br>the job you want.</h1>
         <p class="intro">Paste a job link to explore potential contacts on LinkedIn.</p>
@@ -44,7 +45,7 @@
 
         <button type="submit">Find contacts</button>
         </div>
-        <p id="search-note" class="note">2 starter credits with signup. A search uses 1 credit.</p>
+        <p id="search-note" class="note">3 starter credits with signup. A search uses 1 credit.</p>
         <p id="search-status" role="status" aria-live="polite"></p>
         
       </form>
@@ -76,6 +77,13 @@
 
 
 
+      </div>
+      <aside class="usage-notice" aria-labelledby="usage-heading">
+        <h2 id="usage-heading">Global Usage Limit</h2>
+        <p id="global-usage" role="status">Loading usage...</p>
+        <p>Live search requests per 24-hour window, shared by everyone.</p>
+        <p class="note">This service is free for now. Limits help keep API costs affordable so I can keep it running. This is separate from your account credits.</p>
+      </aside>
     </main>
     <footer>Find My Rec</footer>
   </body>

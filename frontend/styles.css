@@ -489,6 +489,43 @@ footer {
   color:#1651e6
 }
 
+.usage-notice {
+  margin-top: 32px;
+  color: #ffe2a8;
+}
+
+.usage-notice .note {
+  color: #e5d3b2;
+}
+
+.page-primary {
+  min-width: 0;
+}
+
+/* A dedicated right column beside all page content, without a card. */
+@media (min-width: 900px) {
+  .with-sidebar {
+    width: min(1080px, calc(100% - 48px));
+    display: grid;
+    grid-template-columns: minmax(0, 760px) 240px;
+    gap: 48px;
+    align-items: start;
+  }
+
+  .usage-notice {
+    margin-top: 56px;
+  }
+}
+
+.usage-notice h2 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.usage-notice p {
+  margin: 8px 0;
+}
+
 #logout {
   margin: 0;
   background: transparent;

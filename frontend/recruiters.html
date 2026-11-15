@@ -23,7 +23,8 @@
         <a href="#offer-heading">Thank-you posts</a>
       </nav>
     </header>
-    <main id="main-content" class="results-page">
+    <main id="main-content" class="results-page with-sidebar">
+      <div class="page-primary">
 
       <h1 class="results-heading">Explore contacts</h1>
       <p id="recruiter-context"></p>
@@ -72,6 +73,13 @@
         <p id="offer-status" role="status"></p>
         <ul id="offer-list" class="recruiter-list" aria-label="Offer announcements" hidden></ul>
       </section>
+      </div>
+      <aside class="usage-notice" aria-labelledby="usage-heading">
+        <h2 id="usage-heading">Global Usage Limit</h2>
+        <p id="global-usage" role="status">Loading usage...</p>
+        <p>Live search requests per 24-hour window, shared by everyone.</p>
+        <p class="note">This service is free for now. Limits help keep API costs affordable so I can keep it running. This is separate from your account credits.</p>
+      </aside>
     </main>
     <footer>Find My Rec <a href="index.html">Search another job</a></footer>
   </body>

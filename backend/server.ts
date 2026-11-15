@@ -1,7 +1,7 @@
 import { authRequest, credentials, setSession, clearSession, requireUser, sameOrigin, throttle } from "./auth";
 import { creditRpc, paidSearch, hasUnlimitedCredits } from "./credits";
 import express from "express";
-import { accountLimit, reserveUsage } from "./usage-limits";
+import { accountLimit, reserveUsage, getGlobalUsage } from "./usage-limits";
 import path from "node:path";
 import type { ErrorRequestHandler } from "express";
 import { readPostingPage, PostingError } from "./posting-page";
@@ -48,6 +48,10 @@ app.post("/api/auth/signup", throttle, async (req, res) => {
   await reserveUsage("signup:daily", 100, 86400);
   await authRequest("signup", input);
   res.json({ message: "Check your email to confirm your account, then log in here to continue." });
+});
+
+app.get("/api/usage", throttle, async (_req, res) => {
+  res.json(await getGlobalUsage());
 });
 
 app.post("/api/auth/login", throttle, async (req, res) => {

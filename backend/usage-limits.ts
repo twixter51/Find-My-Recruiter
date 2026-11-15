@@ -21,7 +21,7 @@ export async function accountLimit(_req: Request, res: Response, next: NextFunct
   next();
 }
 
-export async function reserveProviderCall(): Promise<void> {
+function providerLimit(): number {
   const configured = process.env.SERPER_DAILY_REQUEST_LIMIT || "100";
   const limit = Number(configured);
 
@@ -29,6 +29,20 @@ export async function reserveProviderCall(): Promise<void> {
     throw new PostingError("Search usage limit is not configured correctly.", 503);
   }
 
+  return limit;
+}
+
+export async function getGlobalUsage() {
+  const used = await creditRpc("global_search_usage", {});
+
+  if (!Number.isSafeInteger(used) || used < 0) {
+    throw new PostingError("Usage count is unavailable.", 503);
+  }
+
+  return { used, limit: providerLimit() };
+}
+
+export async function reserveProviderCall(): Promise<void> {
   // Includes the owner account. No refund: a failed response may still cost money.
-  await reserveUsage("serper:daily", limit, 86400);
+  await reserveUsage("serper:daily", providerLimit(), 86400);
 }

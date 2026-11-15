@@ -243,6 +243,6 @@ Existing protections include backend-only API keys, Git-ignored environment file
 
 ## Accounts and search credits
 
-Email/password authentication and two starter credits per verified account are now implemented. Apply [the setup instructions](database/AUTH-SETUP.md) and [SQL migration](database/auth-credits.sql) before deployment. Credit balances live in Supabase, not browser cache. Each recruiter page or offer-post batch costs one credit, including refreshes. History resets never restore credits. Failed searches are refunded; successful empty searches are charged.
+Email/password authentication and three starter credits per verified account are now implemented. Apply [the setup instructions](database/AUTH-SETUP.md) and [SQL migration](database/auth-credits.sql) before deployment. Credit balances live in Supabase, not browser cache. Each recruiter page or offer-post batch costs one credit, including refreshes. History resets never restore credits. Failed searches are refunded; successful empty searches are charged.
 
 Logged-out job submissions lead to a labeled placeholder preview and signup/login. After email confirmation and login, the pending job resumes automatically and spends one credit on its recruiter search. The auth screen explains that charge before signup. Multi-account promotional abuse still needs additional safeguards; account credits alone do not solve it.

@@ -1,4 +1,25 @@
 let accountUserId = "";
+
+async function updateGlobalUsage(): Promise<void> {
+  const label = document.querySelector<HTMLElement>("#global-usage");
+
+  if (!label) {
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/usage", { cache: "no-store" });
+
+    if (!response.ok) {
+      throw new Error("Usage unavailable");
+    }
+
+    const data = await response.json();
+    label.textContent = `${data.used} / ${data.limit} requests used`;
+  } catch {
+    label.textContent = "Usage count unavailable";
+  }
+}
 // The browser only displays the balance. The backend owns authorization/credits.
 async function updateAccount(): Promise<boolean> {
   const label = document.querySelector<HTMLElement>("#account-status");
@@ -59,7 +80,9 @@ async function creditSearch(url: string, body: Record<string, unknown>): Promise
   try {
     return await fetch(url, { ...options, signal: AbortSignal.timeout(45000) });
   } catch {
-    return fetch(url, { ...options, signal: AbortSignal.timeout(45000) });
+    return await fetch(url, { ...options, signal: AbortSignal.timeout(45000) });
+  } finally {
+    void updateGlobalUsage();
   }
 }
 
@@ -85,3 +108,11 @@ async function initializeAccount(): Promise<void> {
 }
 
 void initializeAccount();
+void updateGlobalUsage();
+
+// Pick up other users' searches without polling hidden tabs.
+setInterval(() => {
+  if (!document.hidden) {
+    void updateGlobalUsage();
+  }
+}, 60000);
