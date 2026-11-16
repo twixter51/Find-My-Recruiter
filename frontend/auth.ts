@@ -50,6 +50,11 @@ function initializeAuth(): void {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    if (button.disabled) {
+      return;
+    }
+
     button.disabled = true;
     toggle.disabled = true;
     message.textContent = "Please wait...";
@@ -73,7 +78,8 @@ function initializeAuth(): void {
 
       password.value = "";
 
-      if (signup) {
+      // Only wait for an email when Supabase did not create a session.
+      if (signup && data.signedIn !== true) {
         message.textContent = data.message;
         signup = false;
         showMode();

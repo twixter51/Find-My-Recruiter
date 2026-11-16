@@ -46,7 +46,16 @@ app.post("/api/auth/signup", throttle, async (req, res) => {
   const input = credentials(req.body);
   // Bound email sends through this app, even across restarts or many IPs.
   await reserveUsage("signup:daily", 100, 86400);
-  await authRequest("signup", input);
+  const session = await authRequest("signup", input);
+
+  // With confirmation disabled, Supabase returns a confirmed session immediately.
+  // Keep the token in an HttpOnly cookie, never in the browser response body.
+  if (session.access_token && session.user?.email_confirmed_at) {
+    setSession(res, session.access_token, session.expires_in);
+    res.json({ signedIn: true });
+    return;
+  }
+
   res.json({ message: "Check your email to confirm your account, then log in here to continue." });
 });
 
