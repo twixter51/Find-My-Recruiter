@@ -47,8 +47,36 @@ export async function authRequest(route: string, body?: unknown, token?: string)
   }
 
   if (!response.ok) {
+    const failure = await response.json().catch(() => ({}));
+    const code = failure.error_code || failure.code;
+
+    // Map known errors instead of exposing raw provider messages or credentials.
+    if (code === "over_email_send_rate_limit") {
+      throw new PostingError("Email sending limit reached. Please wait before trying again.", 429);
+    }
+
     if (response.status === 429) {
       throw new PostingError("Too many attempts. Please wait before trying again.", 429);
+    }
+
+    if (code === "weak_password") {
+      throw new PostingError("Choose a stronger password that meets the account password requirements.", 400);
+    }
+
+    if (code === "email_address_not_authorized") {
+      throw new PostingError("Email delivery is not configured for this address. Please contact the app owner.", 503);
+    }
+
+    if (code === "email_not_confirmed") {
+      throw new PostingError("Confirm your email using the latest confirmation email, then log in.", 403);
+    }
+
+    if (code === "user_already_exists" || code === "email_exists") {
+      throw new PostingError("Unable to create this account. Try logging in instead.", 400);
+    }
+
+    if (response.status >= 500) {
+      throw new PostingError("The account service could not complete signup or login. The app owner should check Supabase Auth logs and email delivery settings.", 503);
     }
 
     throw new PostingError("Could not authenticate. Check your credentials and confirm your email.", 401);

@@ -458,27 +458,10 @@ footer {
   background: linear-gradient(90deg, #747982 0 18%, #383b43 18% 100%);
 }
 
-/* A short wiggle with a pause keeps the example link noticeable but calm. */
-.example-link {
-  display: inline-block;
-  animation: example-wiggle 6s ease-in-out 3;
-}
-
-@keyframes example-wiggle {
-  0%, 12%, 100% { transform: translateX(0); }
-  3%, 9% { transform: translateX(-3x); }
-  6% { transform: translateX(3px); }
-}
-
-.example-link:hover,
-.example-link:focus-visible {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .example-link {
-    animation: none;
-  }
+.signup-note {
+  align-self: center;
+  color: var(--accent);
+  font-size: 13px;
 }
 
 #account-status.credits-empty {
