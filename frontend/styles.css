@@ -458,6 +458,11 @@ footer {
   background: linear-gradient(90deg, #747982 0 18%, #383b43 18% 100%);
 }
 
+#spam-notice {
+  color: #ff8585;
+  font-size: 14px;
+}
+
 .signup-note {
   align-self: center;
   color: var(--accent);

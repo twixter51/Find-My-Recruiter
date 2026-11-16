@@ -6,6 +6,7 @@ function initializeAuth(): void {
   const toggle = document.querySelector<HTMLButtonElement>("#auth-switch");
   const heading = document.querySelector<HTMLElement>("#auth-heading");
   const message = document.querySelector<HTMLElement>("#auth-message");
+  const spamNotice = document.querySelector<HTMLElement>("#spam-notice");
 
   if (!form || !email || !password || !button || !toggle || !heading || !message) {
     return;
@@ -45,6 +46,9 @@ function initializeAuth(): void {
   toggle.addEventListener("click", () => {
     signup = !signup;
     message.textContent = "";
+    if (spamNotice) {
+      spamNotice.hidden = true;
+    }
     showMode();
   });
 
@@ -58,6 +62,9 @@ function initializeAuth(): void {
     button.disabled = true;
     toggle.disabled = true;
     message.textContent = "Please wait...";
+    if (spamNotice) {
+      spamNotice.hidden = true;
+    }
     let endpoint = "/api/auth/login";
 
     if (signup) {
@@ -81,6 +88,9 @@ function initializeAuth(): void {
       // Only wait for an email when Supabase did not create a session.
       if (signup && data.signedIn !== true) {
         message.textContent = data.message;
+        if (spamNotice) {
+          spamNotice.hidden = false;
+        }
         signup = false;
         showMode();
         return;
